@@ -74,7 +74,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return loggedInUser ?? null;
     } catch (error: any) {
       const message =
-        error?.data?.message || error?.message || "Login failed. Please try again.";
+        error?.data?.message ||
+        error?.message ||
+        "Login failed. Please try again.";
       toast.error(message);
       return null;
     }
@@ -84,8 +86,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await registerMutation({ name, email, password }).unwrap();
       toast.success("Account created successfully!");
-      const loggedInUser = await login(email, password);
-      return loggedInUser;
+      router.push("/login");
+      return null;
     } catch (error: any) {
       const message =
         error?.data?.message ||
@@ -101,9 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await logoutMutation().unwrap();
       toast.success("Logged out successfully");
     } catch (error: any) {
-      toast.info(
-        error?.data?.message || error?.message || "Logged out"
-      );
+      toast.info(error?.data?.message || error?.message || "Logged out");
     } finally {
       setUser(null);
       router.push("/login");
