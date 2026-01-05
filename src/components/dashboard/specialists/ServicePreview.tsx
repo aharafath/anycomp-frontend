@@ -3,10 +3,7 @@ import { Button, Avatar, Divider, Box, Modal, Typography } from "@mui/material";
 import Image from "next/image";
 import { Error } from "@mui/icons-material";
 import { Specialist } from "@/lib/services/specialistApiSlice";
-import {
-  useUpdateSpecialistDraftMutation,
-  useUpdateSpecialistVerificationMutation,
-} from "@/lib/services/specialistApiSlice";
+import { useUpdateSpecialistDraftMutation } from "@/lib/services/specialistApiSlice";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
@@ -21,8 +18,6 @@ const ServicePreview: React.FC<Props> = ({ onEditOpen, specialist }) => {
   const [publishModalOpen, setPublishModalOpen] = useState(false);
   const [updateDraft, { isLoading: updatingDraft }] =
     useUpdateSpecialistDraftMutation();
-  const [updateVerification, { isLoading: updatingVerification }] =
-    useUpdateSpecialistVerificationMutation();
 
   const handlePublishClick = () => {
     if (!specialist?.id) {
@@ -42,10 +37,7 @@ const ServicePreview: React.FC<Props> = ({ onEditOpen, specialist }) => {
         id: specialist.id,
         data: { is_draft: false },
       }).unwrap();
-      await updateVerification({
-        id: specialist.id,
-        data: { is_verified: true },
-      }).unwrap();
+
       toast.success("Service published successfully");
       router.push("/");
     } catch {
@@ -208,9 +200,7 @@ const ServicePreview: React.FC<Props> = ({ onEditOpen, specialist }) => {
               <Button
                 onClick={handlePublishClick}
                 variant="contained"
-                disabled={
-                  !specialist?.id || updatingDraft || updatingVerification
-                }
+                disabled={!specialist?.id || updatingDraft}
                 className="bg-secondary hover:bg-primary capitalize px-8 py-2 rounded-lg font-bold disabled:opacity-60"
               >
                 {specialist?.verification_status === "APPROVED" &&
@@ -316,13 +306,11 @@ const ServicePreview: React.FC<Props> = ({ onEditOpen, specialist }) => {
               <Button
                 onClick={handleSaveAndPublish}
                 variant="contained"
-                disabled={updatingDraft || updatingVerification}
+                disabled={updatingDraft}
                 className="bg-secondary hover:bg-primary text-white font-bold capitalize px-6 py-2 rounded-md shadow-none disabled:opacity-60"
                 sx={{ textTransform: "none", fontWeight: "bold" }}
               >
-                {updatingDraft || updatingVerification
-                  ? "Publishing..."
-                  : "Save changes"}
+                {updatingDraft ? "Publishing..." : "Save changes"}
               </Button>
             </div>
           </div>
